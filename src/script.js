@@ -15,13 +15,6 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-/**
- * material
- */
-
- const baseMaterial = new THREE.MeshStandardMaterial({ color: '#111111' })
-
-
 
 /**
  * Textures
@@ -31,6 +24,7 @@ const scene = new THREE.Scene()
  const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg')
  const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
   
+ const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
  const grassHeightTexture = textureLoader.load('/textures/grass/height1.png')
  
  grassHeightTexture.repeat.set(8, 8)
@@ -38,6 +32,29 @@ const scene = new THREE.Scene()
  grassHeightTexture.wrapS = THREE.RepeatWrapping
  
  grassHeightTexture.wrapT = THREE.RepeatWrapping
+
+
+/**
+ * material
+ */
+
+const baseMaterial = new THREE.MeshToonMaterial({
+    color: '#181818'
+})
+baseMaterial.generateMipmaps = false
+baseMaterial.minFilter = THREE.NearestFilter
+baseMaterial.magFilter = THREE.NearestFilter
+baseMaterial.gradientMap = gradientTexture
+
+const secondMaterial = new THREE.MeshToonMaterial({
+    color: '#111',
+    displacementMap: grassHeightTexture,
+    displacementScale: .3,
+})
+secondMaterial.generateMipmaps = false
+secondMaterial.minFilter = THREE.NearestFilter
+secondMaterial.magFilter = THREE.NearestFilter
+secondMaterial.gradientMap = gradientTexture
 
 /**
  * House
@@ -67,7 +84,7 @@ house.add(roof)
 
 // Door
 const door = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.8, 1.8, 100, 100),
+    new THREE.PlaneGeometry(1.85, 1.85, 100, 100),
     new THREE.MeshStandardMaterial({
         color: '#050505',
         transparent: true,
@@ -137,11 +154,7 @@ for(let i = 0; i < 50; i++)
 // Floor
 const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(20, 20, 64, 64),
-    new THREE.MeshStandardMaterial({
-        color: '#050505',
-        displacementMap: grassHeightTexture,
-        displacementScale: .5,
-    })
+    secondMaterial
 )
 floor.receiveShadow = true
 floor.rotation.x = - Math.PI * 0.5
@@ -177,12 +190,12 @@ doorLight.shadow.mapSize.height = 256
 doorLight.shadow.camera.far = 7
 
 doorLight.position.set(0, 2.2, 2.7)
-house.add(doorLight)
+// house.add(doorLight)
 
 /**
  * Ghosts
  */
-const ghost1 = new THREE.PointLight('#ff00ff', 1, 3)
+const ghost1 = new THREE.PointLight('#555555', 1, 3)
 ghost1.castShadow = true
 ghost1.shadow.mapSize.width = 256
 ghost1.shadow.mapSize.height = 256
@@ -237,9 +250,9 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 4
+camera.position.x = 0
 camera.position.y = 2
-camera.position.z = 5
+camera.position.z = 11
 scene.add(camera)
 
 // Controls
@@ -266,6 +279,13 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    //camera
+    const cameraAngle = elapsedTime * 0.2
+    camera.position.x = Math.cos(cameraAngle * .3) * 4 
+    camera.position.y = Math.abs(Math.sin(cameraAngle * .2) * 2) +.3
+    camera.position.z = Math.cos(cameraAngle * .2) * 3 + 7
+
 
     // Ghosts
     const ghost1Angle = elapsedTime * 0.5
