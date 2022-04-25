@@ -196,7 +196,7 @@ doorLight.position.set(0, 2, 2.7)
 /**
  * Ghosts
  */
-const ghost1 = new THREE.PointLight('#00ffff', 1, 5)
+const ghost1 = new THREE.PointLight('#ffffff', 1, 5)
 ghost1.castShadow = true
 ghost1.shadow.mapSize.width = 256
 ghost1.shadow.mapSize.height = 256
@@ -221,7 +221,7 @@ const ghost2CameraHelper = new CameraHelper(ghost2.shadow.camera)
 ghost2CameraHelper.visible = false
 scene.add(ghost2CameraHelper)
 
-const ghost3 = new THREE.PointLight('#00ffff', 1, 5)
+const ghost3 = new THREE.PointLight('#ff7800', 1, 5)
 ghost3.castShadow = true
 ghost3.shadow.mapSize.width = 256
 ghost3.shadow.mapSize.height = 256
