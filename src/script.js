@@ -7,7 +7,7 @@ import * as dat from 'lil-gui'
  * Base
  */
 // Debug
-const gui = new dat.GUI()
+// const gui = new dat.GUI()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -16,51 +16,28 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
+ * material
+ */
+
+ const baseMaterial = new THREE.MeshStandardMaterial({ color: '#111111' })
+
+
+
+/**
  * Textures
  */
-const textureLoader = new THREE.TextureLoader()
+ const textureLoader = new THREE.TextureLoader()
 
-const doorColorTexture = textureLoader.load('/textures/door/color.jpg')
-const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg')
-const doorAmbientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
-const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
-const doorNormalTexture = textureLoader.load('/textures/door/normal.jpg')
-const doorMetalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
-const doorRoughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
-
-const bricksColorTexture = textureLoader.load('/textures/bricks/color2.jpg')
-const bricksAmbientOcclusionTexture = textureLoader.load('/textures/bricks/ambientOcclusion2.png')
-const bricksNormalTexture = textureLoader.load('/textures/bricks/normal2.exr')
-const bricksRoughnessTexture = textureLoader.load('/textures/bricks/roughness2.jpg')
-
-const graveColorTexture = textureLoader.load('/textures/grave/color.jpg')
-// const graveHeightTexture = textureLoader.load('/textures/grave/height.png')
-const graveRoughnessTexture = textureLoader.load('/textures/grave/roughness.jpg')
-
-const roofColorTexture = textureLoader.load('/textures/roof/color.jpg')
-const roofAmbientOcclusionTexture = textureLoader.load('/textures/roof/height.png')
-const roofRoughnessTexture = textureLoader.load('/textures/roof/roughness.exr')
-
-
-const grassColorTexture = textureLoader.load('/textures/grass/color1.jpg')
-const grassHeightTexture = textureLoader.load('/textures/grass/height1.png')
-const grassNormalTexture = textureLoader.load('/textures/grass/normal1.exr')
-const grassRoughnessTexture = textureLoader.load('/textures/grass/roughness1.jpg')
-
-grassColorTexture.repeat.set(8, 8)
-grassHeightTexture.repeat.set(8, 8)
-grassNormalTexture.repeat.set(8, 8)
-grassRoughnessTexture.repeat.set(8, 8)
-
-grassColorTexture.wrapS = THREE.RepeatWrapping
-grassHeightTexture.wrapS = THREE.RepeatWrapping
-grassNormalTexture.wrapS = THREE.RepeatWrapping
-grassRoughnessTexture.wrapS = THREE.RepeatWrapping
-
-grassColorTexture.wrapT = THREE.RepeatWrapping
-grassHeightTexture.wrapT = THREE.RepeatWrapping
-grassNormalTexture.wrapT = THREE.RepeatWrapping
-grassRoughnessTexture.wrapT = THREE.RepeatWrapping
+ const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg')
+ const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
+  
+ const grassHeightTexture = textureLoader.load('/textures/grass/height1.png')
+ 
+ grassHeightTexture.repeat.set(8, 8)
+ 
+ grassHeightTexture.wrapS = THREE.RepeatWrapping
+ 
+ grassHeightTexture.wrapT = THREE.RepeatWrapping
 
 /**
  * House
@@ -72,88 +49,68 @@ scene.add(house)
 // Walls
 const walls = new THREE.Mesh(
     new THREE.BoxGeometry(4, 2, 4),
-    new THREE.MeshStandardMaterial({
-        map: bricksColorTexture,
-        // normalMap: bricksNormalTexture,
-        aoMap: bricksAmbientOcclusionTexture,
-        roughnessMap: bricksRoughnessTexture
-    })
+    baseMaterial
 )
 walls.castShadow = true
 walls.receiveShadow = true
-walls.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(walls.geometry.attributes.uv.array, 2))
 walls.position.y = 1
 house.add(walls)
 
 // Roof
 const roof = new THREE.Mesh(
     new THREE.ConeGeometry(3.5, 1, 4),
-    new THREE.MeshStandardMaterial({
-        map: roofColorTexture,
-        aoMap: roofAmbientOcclusionTexture,
-        roughnessMap: roofRoughnessTexture
-    })
+    baseMaterial
 )
 roof.rotation.y = Math.PI * 0.25
 roof.position.y = 2 + 0.5
-roof.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(roof.geometry.attributes.uv.array, 2))
 house.add(roof)
 
 // Door
 const door = new THREE.Mesh(
     new THREE.PlaneGeometry(1.8, 1.8, 100, 100),
     new THREE.MeshStandardMaterial({
-        map: doorColorTexture,
+        color: '#050505',
         transparent: true,
         alphaMap: doorAlphaTexture,
-        aoMap: doorAmbientOcclusionTexture,
         displacementMap: doorHeightTexture,
-        displacementScale: 0.1,
-        normalMap: doorNormalTexture,
-        metalnessMap: doorMetalnessTexture,
-        roughnessMap: doorRoughnessTexture
+        displacementScale: 0.1
     })
 )
-door.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(door.geometry.attributes.uv.array, 2))
 door.position.y = 1
 door.position.z = 2 + 0.01
 house.add(door)
 
 // Bushes
 const bushGeometry = new THREE.SphereGeometry(1, 16, 16)
-const bushMaterial = new THREE.MeshStandardMaterial({ color: '#89c854' })
 
-const bush1 = new THREE.Mesh(bushGeometry, bushMaterial)
+const bush1 = new THREE.Mesh(bushGeometry, baseMaterial)
 bush1.castShadow = true
 bush1.scale.set(0.5, 0.5, 0.5)
 bush1.position.set(0.8, 0.2, 2.2)
 
-const bush2 = new THREE.Mesh(bushGeometry, bushMaterial)
+const bush2 = new THREE.Mesh(bushGeometry, baseMaterial)
 bush2.castShadow = true
 bush2.scale.set(0.25, 0.25, 0.25)
 bush2.position.set(1.4, 0.1, 2.1)
 
-const bush3 = new THREE.Mesh(bushGeometry, bushMaterial)
+const bush3 = new THREE.Mesh(bushGeometry, baseMaterial)
 bush3.castShadow = true
 bush3.scale.set(0.4, 0.4, 0.4)
 bush3.position.set(- 0.8, 0.1, 2.2)
 
-const bush4 = new THREE.Mesh(bushGeometry, bushMaterial)
+const bush4 = new THREE.Mesh(bushGeometry, baseMaterial)
 bush4.castShadow = true
 bush4.scale.set(0.15, 0.15, 0.15)
 bush4.position.set(- 1, 0.05, 2.6)
 
-// house.add(bush1, bush2, bush3, bush4)
+house.add(bush1, bush2, bush3, bush4)
 
 // Graves
 const graves = new THREE.Group()
 scene.add(graves)
 
 const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.1)
-const graveMaterial =     new THREE.MeshStandardMaterial({
-    map: graveColorTexture,
-    roughnessMap: graveRoughnessTexture
-})
+
 
 for(let i = 0; i < 50; i++)
 {
@@ -163,7 +120,7 @@ for(let i = 0; i < 50; i++)
     const z = Math.sin(angle) * radius        // Get the z position using sinus
 
     // Create the mesh
-    const grave = new THREE.Mesh(graveGeometry, graveMaterial)
+    const grave = new THREE.Mesh(graveGeometry, baseMaterial)
     grave.castShadow = true
 
     // Position
@@ -181,15 +138,12 @@ for(let i = 0; i < 50; i++)
 const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(20, 20, 64, 64),
     new THREE.MeshStandardMaterial({
-        map: grassColorTexture,
+        color: '#050505',
         displacementMap: grassHeightTexture,
-        displacementScale: .3,
-        normalMap: grassNormalTexture,
-        roughnessMap: grassRoughnessTexture
+        displacementScale: .5,
     })
 )
 floor.receiveShadow = true
-floor.geometry.setAttribute('uv2', new THREE.Float32BufferAttribute(floor.geometry.attributes.uv.array, 2))
 floor.rotation.x = - Math.PI * 0.5
 floor.position.y = 0
 scene.add(floor)
@@ -198,25 +152,25 @@ scene.add(floor)
  * Lights
  */
 // Ambient light
-const ambientLight = new THREE.AmbientLight('#b9d5ff', 0.3)
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
+const ambientLight = new THREE.AmbientLight('#b9d5ff', 1)
+// gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001)
 scene.add(ambientLight)
 
 // Directional light
-const moonLight = new THREE.DirectionalLight('#b9d5ff', 0.12)
+const moonLight = new THREE.DirectionalLight('#b9d5ff', 0.5)
 moonLight.castShadow = true
 moonLight.shadow.mapSize.width = 256
 moonLight.shadow.mapSize.height = 256
 moonLight.shadow.camera.far = 15
 moonLight.position.set(4, 5, - 2)
-gui.add(moonLight, 'intensity').min(0).max(1).step(0.001)
-gui.add(moonLight.position, 'x').min(- 5).max(5).step(0.001)
-gui.add(moonLight.position, 'y').min(- 5).max(5).step(0.001)
-gui.add(moonLight.position, 'z').min(- 5).max(5).step(0.001)
+// gui.add(moonLight, 'intensity').min(0).max(1).step(0.001)
+// gui.add(moonLight.position, 'x').min(- 5).max(5).step(0.001)
+// gui.add(moonLight.position, 'y').min(- 5).max(5).step(0.001)
+// gui.add(moonLight.position, 'z').min(- 5).max(5).step(0.001)
 scene.add(moonLight)
 
 // Door light
-const doorLight = new THREE.PointLight('#ff7d46', 1, 10)
+const doorLight = new THREE.PointLight('#ff7d46', 3, 10)
 doorLight.castShadow = true
 doorLight.shadow.mapSize.width = 256
 doorLight.shadow.mapSize.height = 256
