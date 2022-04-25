@@ -283,7 +283,7 @@ const tick = () =>
     //camera
     const cameraAngle = elapsedTime * 0.2
     camera.position.x = Math.cos(cameraAngle * .3) * 4 
-    camera.position.y = Math.abs(Math.sin(cameraAngle * .2) * 2) +.3
+    camera.position.y = Math.abs(Math.sin(cameraAngle * .2) * 2) +.4
     camera.position.z = Math.cos(cameraAngle * .2) * 3 + 7
 
 
