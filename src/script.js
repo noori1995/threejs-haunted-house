@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
+import { CameraHelper } from 'three'
 
 /**
  * Base
@@ -24,7 +25,7 @@ const scene = new THREE.Scene()
  const doorAlphaTexture = textureLoader.load('/textures/door/alpha.jpg')
  const doorHeightTexture = textureLoader.load('/textures/door/height.jpg')
   
- const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
+ const gradientTexture = textureLoader.load('/textures/gradients/5.jpg')
  const grassHeightTexture = textureLoader.load('/textures/grass/height1.png')
  
  grassHeightTexture.repeat.set(8, 8)
@@ -170,7 +171,7 @@ const ambientLight = new THREE.AmbientLight('#b9d5ff', 1)
 scene.add(ambientLight)
 
 // Directional light
-const moonLight = new THREE.DirectionalLight('#b9d5ff', 0.5)
+const moonLight = new THREE.DirectionalLight('#b9d5ff', 0.05)
 moonLight.castShadow = true
 moonLight.shadow.mapSize.width = 256
 moonLight.shadow.mapSize.height = 256
@@ -183,38 +184,54 @@ moonLight.position.set(4, 5, - 2)
 scene.add(moonLight)
 
 // Door light
-const doorLight = new THREE.PointLight('#ff7d46', 3, 10)
+const doorLight = new THREE.PointLight('#ff7d46', 1, 3)
 doorLight.castShadow = true
 doorLight.shadow.mapSize.width = 256
 doorLight.shadow.mapSize.height = 256
 doorLight.shadow.camera.far = 7
 
-doorLight.position.set(0, 2.2, 2.7)
+doorLight.position.set(0, 2, 2.7)
 // house.add(doorLight)
 
 /**
  * Ghosts
  */
-const ghost1 = new THREE.PointLight('#555555', 1, 3)
+const ghost1 = new THREE.PointLight('#ffffff', 1, 5)
 ghost1.castShadow = true
 ghost1.shadow.mapSize.width = 256
 ghost1.shadow.mapSize.height = 256
+ghost1.shadow.camera.near = 1
 ghost1.shadow.camera.far = 7
 scene.add(ghost1)
 
-const ghost2 = new THREE.PointLight('#00ffff', 1, 3)
+const ghost1CameraHelper = new CameraHelper(ghost1.shadow.camera)
+ghost1CameraHelper.visible = false
+scene.add(ghost1CameraHelper)
+
+const ghost2 = new THREE.PointLight('#00ffff', 1, 5)
 ghost2.castShadow = true
 ghost2.shadow.mapSize.width = 256
 ghost2.shadow.mapSize.height = 256
+ghost2.shadow.camera.near = 1
 ghost2.shadow.camera.far = 7
 scene.add(ghost2)
 
-const ghost3 = new THREE.PointLight('#ff7800', 1, 3)
+
+const ghost2CameraHelper = new CameraHelper(ghost2.shadow.camera)
+ghost2CameraHelper.visible = false
+scene.add(ghost2CameraHelper)
+
+const ghost3 = new THREE.PointLight('#ff7800', 1, 5)
 ghost3.castShadow = true
 ghost3.shadow.mapSize.width = 256
 ghost3.shadow.mapSize.height = 256
+ghost3.shadow.camera.near = 1
 ghost3.shadow.camera.far = 7
 scene.add(ghost3)
+
+const ghost3CameraHelper = new CameraHelper(ghost3.shadow.camera)
+ghost3CameraHelper.visible = false
+scene.add(ghost3CameraHelper)
 
 /**
  * Fog
@@ -288,20 +305,20 @@ const tick = () =>
 
 
     // Ghosts
-    const ghost1Angle = elapsedTime * 0.5
+    const ghost1Angle = elapsedTime * 0.3
     ghost1.position.x = Math.cos(ghost1Angle) * 4
     ghost1.position.z = Math.sin(ghost1Angle) * 4
-    ghost1.position.y = Math.sin(elapsedTime * 3)
+    ghost1.position.y = Math.max(Math.sin(elapsedTime * .3) + 1, 1)
 
     const ghost2Angle = - elapsedTime * 0.32
     ghost2.position.x = Math.cos(ghost2Angle) * 5
     ghost2.position.z = Math.sin(ghost2Angle) * 5
-    ghost2.position.y = Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5)
+    ghost2.position.y = Math.max(Math.sin(elapsedTime * .4) + Math.sin(elapsedTime * .5), 1)
 
     const ghost3Angle = - elapsedTime * 0.18
     ghost3.position.x = Math.cos(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.32))
     ghost3.position.z = Math.sin(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.5))
-    ghost3.position.y = Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5)
+    ghost3.position.y = Math.max(Math.sin(elapsedTime * .4) + Math.sin(elapsedTime * .5), 1)
 
     // Update controls
     controls.update()
